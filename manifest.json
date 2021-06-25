@@ -1,0 +1,23 @@
+{
+  "name": "武汉理工大学教务系统助手",
+  "version": "2.0",
+  "manifest_version": 2,
+  "content_scripts": [
+    {
+      "matches": ["http://218.197.102.183/Course/*", "http://202.114.50.130/*"],
+      "js": ["js/basic.js", "js/course.js", "js/course2.js", "js/score.js", "js/eot.js", "js/other.js"],
+      "css": ["css/index.css"],
+      "run_at": "document_end"
+    }
+  ],
+
+  "browser_action": {
+    "default_icon": "./head.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "./head.png",
+    "32": "./head.png",
+    "128": "./head.png"
+  }
+}
