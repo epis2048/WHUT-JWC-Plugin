@@ -37,7 +37,7 @@ if(/202.114.50.130\/EOT\/login.do\?msg/g.test(window.location.href)){
 					if(state.textContent=="未评") state.innerHTML='<div style="background-color:red;">评教时间已过</div>';
                     return;
                 }
-                else if(current>start){
+                else if(current>=start){
                     if(state.textContent=="未评") state.innerHTML='<div style="background-color:green;">可以评教</div>';
 					if(state.textContent=="已评") state.innerHTML='可修改';
                     return;
@@ -81,29 +81,10 @@ if(/202.114.50.130\/EOT\/login.do\?msg/g.test(window.location.href)){
         for (let i = 0; i < 10; i++) {
             $(items[i].children[sel]).click()
         }
-		if(confirm("选完后自动提交？(自动提交只会提交全A)")){
-			document.getElementById("bt_div").style.display="none";
-			document.getElementById("js_div").style.display="none";
-			document.getElementById("content_div").style.display="none";
-			document.getElementById("bt_div_submit").style.display="block";
-			//$(".pageForm").submit();
-			$.ajax({
-				type: "POST",
-				url: "rwpjUpdate.do",
-				data:"pjrwdm="+$("[name='pjrwdm']").val()+"&cpdxdm=&zbtmdm=1&zb1=A&zbtmdm=10&zb10=A&zbtmdm=2&zb2=A&zbtmdm=3&zb3=A&zbtmdm=4&zb4=A&zbtmdm=5&zb5=A&zbtmdm=6&zb6=A&zbtmdm=7&zb7=A&zbtmdm=8&zb8=A&zbtmdm=9&zb9=A&py=&wjwtdm=1&xzwdt=&xzwdttm=1&xzwdtxx=E&wjwtdm=2&wjwtdm=3&wjwtdm=4&wjwtdm=5&wjwtdm=6&wjwtdm=7&wjwtdm=8&wjwtdm=9&xzwdt=&xzwdttm=9&xzwdtxx=G&wdttm=10&wdt=",
-				success: function(result,status){
-					//setTimeout(function(){navTab.closeCurrentTab(result.navTabId);}, 100);
-					/*
-					var tmp = document.body.onload; //保存原来的事件句柄
-					document.body.setAttribute("onload","validateCallback(result, navTabAjaxDone)");
-					console.log(document.body.onload);
-					document.body.onload();
-					document.body.onload=tmp; //恢复原来的事件句柄
-					location.href="javascript:validateCallback(result, navTabAjaxDone); void 0";*/
-					alert("保存成功！");
-					
-				}
-			});
+		if(confirm("选完后自动提交？")){
+			const theScript = document.createElement('script');
+			theScript.innerHTML = 'validateCallback(document.forms[2], navTabAjaxDone)';
+			document.body.appendChild(theScript);
 		}
     });
 }
