@@ -15,6 +15,16 @@
 		d = d < 10 ? ('0' + d) : d;
 		return y + '-' + m + '-' + d;
 	}
+	
+	function isJsonString(str) {
+        try {
+            if (typeof JSON.parse(str) == "object") {
+                return true;
+            }
+        } catch(e) {
+        }
+        return false;
+    }
 
 	/*
 	* @function initScript 初始化脚本，加载toastr

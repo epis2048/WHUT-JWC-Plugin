@@ -10,7 +10,8 @@
 function djs(){}
 
 // 选课系统要干的
-if(/218.197.102.183\/Course\/login.do\?msg/g.test(window.location.href)){
+if(/218.197.102.183\/Course\/login.do\?msg/g.test(window.location.href) || /202.114.50.131\/Course\/login.do\?msg/g.test(window.location.href)){
+	initScript();
 	// 去除悬浮窗和遮罩
 	document.querySelector("#fade").style.display='none';
 	document.querySelector("#MyDiv").style.display='none';
@@ -37,15 +38,17 @@ if(/218.197.102.183\/Course\/login.do\?msg/g.test(window.location.href)){
 					<p style="font-size: 14px;">	2. 成绩查询</p><br>
 					<p style="font-size: 14px;">	3. 评教</p><br>
 					<h3 style="font-size: 16px;">功能：</h3><br>
-					<p style="font-size: 14px;">	1. 自动隐藏30s提示框（右上角可以显示）</p><br>
+					<p style="font-size: 14px;">	1. 选课系统自动隐藏20s提示框（右上角可以显示）</p><br>
 					<p style="font-size: 14px;">	2. 显示排课班级</p><br>
-					<p style="font-size: 14px;">	3. 抢课/抢补退选</p><br>
-					<p style="font-size: 14px;">	4. 自动将时间冲突的课程变红</p><br>
-					<p style="font-size: 14px;">	5. 网页右上角可以查看选课日志和课表</p><br>
-					<p style="font-size: 14px;">	6. 把所有成绩改成100分（娱乐）</p><br>
-					<p style="font-size: 14px;">	7. 计算课外学分总和</p><br>
-					<p style="font-size: 14px;">	8. 评教课程列表显示状态</p><br>
-					<p style="font-size: 14px;">	9. 评教页面全选A/B</p><br>
+					<p style="font-size: 14px;">	3. 抢课（循环抢课是指轮次提交选课列表中的课程；队列抢课是指优先提交选课列表中第一门课程，第一门课程选课成功后再提交后面的课程。）</p><br>
+					<p style="font-size: 14px;">	4. 抢补退选</p><br>
+					<p style="font-size: 14px;">	5. 自动将时间冲突的课程变红</p><br>
+					<p style="font-size: 14px;">	6. 网页右上角可以查看选课日志和课表</p><br>
+					<p style="font-size: 14px;">	7. 把所有成绩改成100分（娱乐）</p><br>
+					<p style="font-size: 14px;">	8. 计算课外学分总和</p><br>
+					<p style="font-size: 14px;">	9. 评教课程列表显示更加详细的评教状态</p><br>
+					<p style="font-size: 14px;">	10. 评教页面全选A/B</p><br>
+					<p style="font-size: 14px;">	11. 评教页面自动以全A提交</p><br>
 					<p></p></br>
 					<p></p></br>
 				</div>
@@ -53,7 +56,91 @@ if(/218.197.102.183\/Course\/login.do\?msg/g.test(window.location.href)){
 		</div> 
 	`
 	
-	let body = document.querySelector("body");
+	
+	body = document.querySelector("body");
+	let divBox = document.createElement("div");
+	divBox.className = "frame";
+	divBox.id="queueTable"
+	divBox.innerHTML = `
+		<h1 class="title">
+            抢课队列
+        </h1>
+        <div class="current-table">
+            <div class="show-date">
+                <div class="date">课程名称</div>
+                <div class="date">上课老师</div>
+                <div class="date">上课时间</div>
+                <div class="date">上课地点</div>
+                <div class="date2">操作</div>
+            </div>
+			<!--
+            <div class="show-count">
+                <div class="count">一</div>
+                <div class="count">二</div>
+                <div class="count">三</div>
+                <div class="count">四</div>
+                <div class="count">五</div>
+            </div>-->
+			<div class="show-lesson">
+                <div class="slist" id="queueTable_title">
+                    <div class="lesson" id="queueTable_title_1"></div>
+                    <div class="lesson" id="queueTable_title_2"></div>
+                    <div class="lesson" id="queueTable_title_3"></div>
+                    <div class="lesson" id="queueTable_title_4"></div>
+                    <div class="lesson" id="queueTable_title_5"></div>
+                </div>
+                <div class="slist" id="queueTable_teacher">
+                    <div class="lesson" id="queueTable_teacher_1"></div>
+                    <div class="lesson" id="queueTable_teacher_2"></div>
+                    <div class="lesson" id="queueTable_teacher_3"></div>
+                    <div class="lesson" id="queueTable_teacher_4"></div>
+                    <div class="lesson" id="queueTable_teacher_5"></div>
+                </div>
+                <div class="slist" id="queueTable_time">
+                    <div class="lesson" id="queueTable_time_1"></div>
+                    <div class="lesson" id="queueTable_time_2"></div>
+                    <div class="lesson" id="queueTable_time_3"></div>
+                    <div class="lesson" id="queueTable_time_4"></div>
+                    <div class="lesson" id="queueTable_time_5"></div>
+                </div>
+                <div class="slist" id="queueTable_place">
+                    <div class="lesson" id="queueTable_place_1"></div>
+                    <div class="lesson" id="queueTable_place_2"></div>
+                    <div class="lesson" id="queueTable_place_3"></div>
+                    <div class="lesson" id="queueTable_place_4"></div>
+                    <div class="lesson" id="queueTable_place_5"></div>
+                </div>
+                <div class="slist2" id="queueTable_option">
+                    <div class="lesson" id="queueTable_option_1"><a>移出</a></div>
+                    <div class="lesson" id="queueTable_option_2"><a>移出</a></div>
+                    <div class="lesson" id="queueTable_option_3"><a>移出</a></div>
+                    <div class="lesson" id="queueTable_option_4"><a>移出</a></div>
+                    <div class="lesson" id="queueTable_option_5"><a>移出</a></div>
+                </div>
+            </div>
+		</div>
+
+	`;
+	body.appendChild(divBox);
+	$("#queueTable_option_1 > a").click(function () {
+		deleteLessonQueue(0);
+	});
+	$("#queueTable_option_2 > a").click(function () {
+		deleteLessonQueue(1);
+	});
+	$("#queueTable_option_3 > a").click(function () {
+		deleteLessonQueue(2);
+	});
+	$("#queueTable_option_4 > a").click(function () {
+		deleteLessonQueue(3);
+	});
+	$("#queueTable_option_5 > a").click(function () {
+		deleteLessonQueue(4);
+	});
+
+
+	
+	body = document.querySelector("body");
 	body.appendChild(mydiv2);
 	$($("ul.nav").children()[6]).after(`<li><a href="javascript:ShowDiv('MyDiv2','fade');">插件说明</a></li>`);
 	$($("ul.nav").children()[9]).html("");
